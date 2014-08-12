@@ -18,7 +18,6 @@
 
 #include "vcc_if.h"
 
-static int run = 1;
 static rd_kafka_t *rk;
 static int exit_eof = 0;
 static int quiet = 0;
@@ -66,7 +65,6 @@ vmod_hello(const struct vrt_ctx *ctx, VCL_STRING name)
 		return (NULL);
 	}
 
-	fprintf(stderr, "FLB avant release");
 
 	/* Update work space with what we've used */
 	WS_Release(ctx->ws, v);
@@ -93,23 +91,11 @@ vmod_hello(const struct vrt_ctx *ctx, VCL_STRING name)
 				errstr);
 			exit(1);
 		}
-		else
-		{	
-			fprintf(stderr, "FLB success producer");
-
-		}
-		/* Set logger */
-		//rd_kafka_set_logger(rk, logger);
-		//rd_kafka_set_log_level(rk, LOG_DEBUG);
 
 		/* Add brokers */
 		if (rd_kafka_brokers_add(rk, brokers) == 0) {
 			fprintf(stderr, "%% No valid brokers specified\n");
 			exit(1);
-		}
-		else
-		{
-			fprintf(stderr, "FLB success broker");
 		}
 		/* Create topic */
 		rkt = rd_kafka_topic_new(rk, topic, topic_conf);
@@ -150,12 +136,11 @@ vmod_hello(const struct vrt_ctx *ctx, VCL_STRING name)
 			/* Poll to handle delivery reports */
 			rd_kafka_poll(rk, 0);
 
-		 fprintf(stderr, "FLB apres poll");
 		/* Poll to handle delivery reports */
 		rd_kafka_poll(rk, 0);
 
 		/* Wait for messages to be delivered */
-		while (run && rd_kafka_outq_len(rk) > 0)
+		while ( rd_kafka_outq_len(rk) > 0)
 			rd_kafka_poll(rk, 100);
 
 		/* Destroy topic */
@@ -163,7 +148,6 @@ vmod_hello(const struct vrt_ctx *ctx, VCL_STRING name)
 
 		/* Destroy the handle */
 		rd_kafka_destroy(rk);
-		fprintf(stderr, "FLB apres destroy");
 		
 
 	return (p);
