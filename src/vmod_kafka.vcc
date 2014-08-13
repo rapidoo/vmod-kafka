@@ -1,0 +1,4 @@
+$Module kafka 1 Kafka VMOD
+
+$Function STRING send_msg(STRING, STRING, STRING)
+

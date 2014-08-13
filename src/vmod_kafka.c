@@ -43,13 +43,13 @@ init_function(struct vmod_priv *priv, const struct VCL_conf *conf)
 }
 
 VCL_STRING
-vmod_hello(const struct vrt_ctx *ctx, VCL_STRING name)
+vmod_send_msg(const struct vrt_ctx *ctx, VCL_STRING broker, VCL_STRING topic_name, VCL_STRING name)
 {
 	char *p;
 	unsigned u, v;
 	char errstr[512];
-        char *brokers = "localhost:9092";
-        char *topic = "fred";
+        char *brokers = (char*)broker;
+        char *topic = (char*)topic_name;
 
 	rd_kafka_topic_t *rkt;
 	
@@ -57,7 +57,7 @@ vmod_hello(const struct vrt_ctx *ctx, VCL_STRING name)
 
 	u = WS_Reserve(ctx->ws, 0); /* Reserve some work space */
 	p = ctx->ws->f;		/* Front of workspace area */
-	v = snprintf(p, u, "Hello, %s", name);
+	v = snprintf(p, u, "%s", name);
 	v++;
 	if (v > u) {
 		/* No space, reset and leave */
